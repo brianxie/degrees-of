@@ -21,24 +21,29 @@ def root():
 
 # TODO http requests
 
-@app.route("/getname/<uuid>")
+# @app.route("/getname/<uuid>")
+@app.route("/getname/", methods=["GET"])
 def getName(uuid):
     return json.dumps(get_name(uuid))
 
-@app.route("/createuserdata/<name>/<uuid>/<isartist>")
-def createUserData(name, uuid, isartist):
-    return json.dumps(create_user_data(name, uuid, isartist))
-
-@app.route("/getuserentry/<uuid>")
+# @app.route("/getuserentry/<uuid>")
+@app.route("/getuserentry/", methods=["GET"])
 def getUserEntry(uuid):
     return json.dumps(get_user_entry(uuid))
 
-@app.route("/getartistscores/<uuid>")
+# @app.route("/getartistscores/<uuid>")
+@app.route("/getartistscores/", methods=["GET"])
 def getArtistScores(uuid):
     user = get_user_entry(uuid)
     return json.dumps(get_artist_scores(user))
 
-@app.route("/makeconnection/<uuid1>/<uuid2>")
+# @app.route("/createuserdata/<name>/<uuid>/<isartist>")
+@app.route("/createuserdata/", methods=["POST"])
+def createUserData(name, uuid, isartist):
+    return json.dumps(create_user_data(name, uuid, isartist))
+
+# @app.route("/makeconnection/<uuid1>/<uuid2>")
+@app.route("/makeconnection/", methods=["POST"])
 def makeConnection(uuid1, uuid2):
     return make_connection(uuid1, uuid2)
 
