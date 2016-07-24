@@ -2,6 +2,46 @@ from pymongo import MongoClient
 import json
 
 # done
+def register_name(uuid, name):
+    name_entry = {}
+    name_entry["_id"] = uuid
+    name_entry["name"] = name
+
+    client = MongoClient()
+    names = client.names # database names
+
+    result = names.all.update_one({"_id": uuid}, {"$set": name_entry}, upsert=True)
+    return result
+
+# done
+def get_name(uuid):
+    client = MongoClient()
+    names = client.names # database names
+    result = names.all.find_one({"_id": uuid}) # searches just by uuid; at most one match
+    return result
+
+# done
+def create_user_data(name, uuid, is_artist):
+    # initializes the (json? bson? python thing?) that characterizes a user
+    # see user-data-schema
+    user_data = {}
+    user_data["_id"] = uuid
+    user_data["is_artist"] = is_artist
+    user_data["artist_scores"] = []
+    if is_artist:
+        artist_entry = {}
+        artist_entry["_id"] = uuid
+        artist_entry["distance"] = 0
+        user_data["artist_scores"].append(artist_entry)
+    user_data["neighbors"] = []
+
+    register_name(uuid, name)
+
+    # user_json = json.dumps(user_data)
+    # return user_json
+    return user_data
+
+# done
 def get_user(uuid): # queries users db
     client = MongoClient()
     users = client.users # database users
@@ -58,24 +98,6 @@ def get_artist_scores(user):
     #     # ignore the shortest path; we don't want that
 
     return artist_scores
-
-# done
-def create_user_data(uuid, is_artist):
-    # initializes the (json? bson? python thing?) that characterizes a user
-    # see user-data-schema
-    user_data = {}
-    user_data["_id"] = uuid
-    user_data["is_artist"] = is_artist
-    user_data["artist_scores"] = []
-    if is_artist:
-        artist_entry = {}
-        artist_entry["_id"] = uuid
-        artist_entry["distance"] = 0
-        user_data["artist_scores"].append(artist_entry)
-    user_data["neighbors"] = []
-    # user_json = json.dumps(user_data)
-    # return user_json
-    return user_data
 
 # done
 def add_neighbor(src_user, dst_user):
@@ -161,11 +183,11 @@ def make_connection(uuid_1, uuid_2):
     user_1 = get_user(uuid_1)
     user_2 = get_user(uuid_2)
 
-    # create users  if they don't yet exist
+    # create users with NO_NAME if they don't yet exist
     if user_1 == None:
-        user_1 = create_user_data(uuid_1, IS_ARTIST_CONST)
+        user_1 = create_user_data("NO_NAME", uuid_1, IS_ARTIST_CONST)
     if user_2 == None:
-        user_2 = create_user_data(uuid_2, IS_ARTIST_CONST)
+        user_2 = create_user_data("NO_NAME", uuid_2, IS_ARTIST_CONST)
 
     # add_neighbor on each node
     new_entry_created_1 = add_neighbor(user_1, user_2)[1]
