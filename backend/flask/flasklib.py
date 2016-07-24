@@ -14,6 +14,7 @@ def register_name(uuid, name):
     return result
 
 # done
+## PUBLIC API
 def get_name(uuid):
     client = MongoClient()
     names = client.names # database names
@@ -43,6 +44,7 @@ def register_user_data(user): # a "user" is the output of create_user_data
     return result
 
 # done
+## PUBLIC API
 def create_user_data(name, uuid, is_artist):
     # initializes the (json? bson? python thing?) that characterizes a user
     # see user-data-schema
@@ -65,6 +67,7 @@ def create_user_data(name, uuid, is_artist):
     return user_data
 
 # done
+## PUBLIC API
 def get_user_entry(uuid): # queries users db
     client = MongoClient()
     users = client.users # database users
@@ -97,6 +100,7 @@ def get_neighbor_uuid_set(user):
     return neighbor_uuid_set
 
 # done
+## PUBLIC API
 def get_artist_scores(user):
     # get distances to all artists for given uuid
     # note that the schema stores the exact path, but this method is not interested
@@ -133,7 +137,7 @@ def add_neighbor(src_user, dst_user):
     return (src_user, new_entry_required)
 
 
-# done, i think
+# done
 def update_required(target, caller):
     # checks if we should add this node to the stack
     target_artist_scores_list = target["artist_scores"]
@@ -187,7 +191,8 @@ def update_node(target, caller): # or user? should this query mongo?
     # if so, recursively call update_node on that node
     return None # TODO
 
-# done, probably?
+# done
+## PUBLIC API
 def make_connection(uuid_1, uuid_2):
     IS_ARTIST_CONST = False # always assume that any new node is not an artist
 

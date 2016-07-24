@@ -14,6 +14,11 @@ if __name__ == "__main__":
     app.run(host="0.0.0.0")
 
 
+#getname
+#createuserdata
+#getuserentry
+#getartistscores
+#makeconnection
 
 # dead
 # def recompute_graph(): # not required if we graph is built incrementally (?)
