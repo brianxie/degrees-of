@@ -4,11 +4,24 @@ def add_user(uuid, is_artist): # string, bool
     # should update users table in mongodb
     client = MongoClient()
     users = client.users # database users
-    result = users.all.insert_one({uuid: is_artist}) # collection all (only has one)
+    # result = users.all.insert_one({"_id": uuid, "is_artist": is_artist}) # collection all (only has one)
+    # don't use insert to avoid duplicate key error
+    result = users.all.update_one({"_id": uuid, "is_artist": is_artist}, {"$setOnInsert": {"_id": uuid, "is_artist": is_artist}}, upsert=True)
     return result # TODO
+
+def get_all_users():
+    client = MongoClient()
+    users = client.users # database users
+    cursor = users.all.find()
+    documents = []
+    for document in cursor:
+        print(document)
+        documents.append(document)
+    return documents
 
 def get_neighbors(uuid):
     # query mongodb, retrieve list of neighbors
+    client = MongoClient()
     return None
 
 def get_distances(uuid):

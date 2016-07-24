@@ -16,7 +16,9 @@ userinfo = client.userinfo # database userinfo
 # insert the data
 result = add_user(UUID_1, False)
 print(result)
-result = users.all.insert_one({UUID_2: False}) # collection all
-print(result)
 
 
+# result = users.all.insert_many({UUID_2: False}) # collection all
+# print(result)
+
+result = get_all_users()
