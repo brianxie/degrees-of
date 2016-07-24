@@ -1,0 +1,27 @@
+// getname
+{
+    "uuid": "int"
+}
+
+// getuserentry
+{
+    "uuid": "int"
+}
+
+// getartistscores
+{
+    "uuid": "int"
+}
+
+// createuserdata
+{
+    "name": "string",
+    "uuid": "int",
+    "is_artist": "bool"
+}
+
+// makeconnection
+{
+    "uuid_1": "int1",
+    "uuid_2": "int2"
+}
