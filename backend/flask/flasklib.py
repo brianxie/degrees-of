@@ -1,18 +1,31 @@
 from pymongo import MongoClient
+import json
+
+def create_user_data(uuid, is_artist):
+    # initializes the (json? bson? python thing?) that characterizes a user
+    # see user-data-schema
+    user_data = {}
+    user_data["_id"] = uuid
+    user_data["is_artist"] = is_artist
+    user_data["artist_scores"] = []
+    user_data["neighbors"] = []
+    # user_json = json.dumps(user_data)
+    # return user_json
+    return user_data
 
 def add_user(uuid, is_artist): # string, bool; queries users
     # should update users table in mongodb
     client = MongoClient()
     users = client.users # database users
     # don't use insert to avoid duplicate key error
-    # result = users.all.insert_one({"_id": uuid, "is_artist": is_artist}) # collection all (only has one)
-    result = users.all.update_one({"_id": uuid, "is_artist": is_artist}, {"$setOnInsert": {"_id": uuid, "is_artist": is_artist}}, upsert=True)
+    user_data = create_user_data(uuid, is_artist)
+    result = users.all.update_one(user_data, {"$setOnInsert": user_data}, upsert=True)
     return result
 
 def get_user(uuid): # queries users
     client = MongoClient()
     users = client.users # database users
-    result = users.all.find_one({"_id": uuid})
+    result = users.all.find_one({"_id": uuid}) # searches just by uuid; at most one match
     return result
 
 def get_all_users(): # queries users
@@ -25,7 +38,7 @@ def get_all_users(): # queries users
     return documents
 
 def get_neighbors(uuid):
-    # query mongodb, retrieve list of neighbors
+    # query mongodb, retrieve list of neighbors (1-neighbors, a la adjacency list)
     client = MongoClient()
     return None
 
@@ -42,7 +55,7 @@ def update_node(uuid):
     # call get_neighbors and get list of neighbors
     # for each neighbor, call get_distances; see if this node should be updated
     # for each neighbor, check if neighbor node also needs to be updated
-    # if so, recursively call uuid on that node
+    # if so, recursively call update_node on that node
     return None # TODO
 
 def make_connection(uuid1, uuid2):

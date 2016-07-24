@@ -25,3 +25,6 @@ result = get_user(UUID_1)
 
 result = get_all_users()
 # print(result)
+
+result = create_user_data(UUID_1, False)
+# print(result)
