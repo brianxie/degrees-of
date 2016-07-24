@@ -15,10 +15,13 @@ userinfo = client.userinfo # database userinfo
 
 # insert the data
 result = add_user(UUID_1, False)
-print(result)
+# print(result)
 
+result = add_user(UUID_2, False)
+# print(result)
 
-# result = users.all.insert_many({UUID_2: False}) # collection all
+result = get_user(UUID_1)
 # print(result)
 
 result = get_all_users()
+# print(result)
