@@ -38,6 +38,9 @@ print(result)
 result = get_artist_scores(USER_2)
 print(result)
 
+result = get_all_users()
+print(result)
+
 
 
 # result = get_user(UUID_1)

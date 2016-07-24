@@ -197,10 +197,8 @@ def make_connection(uuid_1, uuid_2):
 
     update_pq = [] # tuples of uuid, caller uuid
     if update_required(user_1, user_2):
-        print("1,2 required")
         update_pq.insert(0, (uuid_1, uuid_2))
     if update_required(user_2, user_1):
-        print("2,1 required")
         update_pq.insert(0, (uuid_2, uuid_1))
 
     while len(update_pq) > 0:
