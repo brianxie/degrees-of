@@ -11,11 +11,11 @@ def root():
     return "brian\nkevin\nrahul"
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0")
 
 
 
 # dead
-def recompute_graph(): # not required if we graph is built incrementally (?)
-    # creates graph from edge tables? floyd-warshall?
-    return None # TODO
+# def recompute_graph(): # not required if we graph is built incrementally (?)
+#     # creates graph from edge tables? floyd-warshall?
+#     return None # TODO

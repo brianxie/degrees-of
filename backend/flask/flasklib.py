@@ -23,7 +23,17 @@ def get_neighbors(user):
 
 def get_distances(user):
     # get distances to all artists for given uuid
-    return None
+    # note that the schema stores the exact path, but this method is not interested
+    artist_scores = user["artist_scores"]
+
+    # distances = []
+    # for artist_entry in artist_scores:
+    #     distance_entry = {}
+    #     distance_entry["_id"] = artist_entry["_id"]
+    #     distance_entry["distance"] = artist_entry["distance"]
+    #     # ignore the shortest path; we don't want that
+
+    return artist_scores
 
 def create_user_data(uuid, is_artist):
     # initializes the (json? bson? python thing?) that characterizes a user
@@ -51,7 +61,11 @@ def add_neighbor(src, dst):
     # adds dst as a neighbor of src
     return None
 
-def update_node(uuid): # or user? should this query mongo?
+def update_required(user):
+    # checks if we should add this node to the stack
+    return None
+
+def update_node(user): # or user? should this query mongo?
     # call get_neighbors and get list of neighbors
     # for each neighbor, call get_distances; see if this node should be updated
     # for each neighbor, check if neighbor node also needs to be updated

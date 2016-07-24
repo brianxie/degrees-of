@@ -20,7 +20,6 @@ result = add_user(UUID_1, False)
 result = add_user(UUID_2, False)
 # print(result)
 
-
 result = get_user(UUID_1)
 # print(result)
 result = get_all_users()
@@ -28,14 +27,10 @@ result = get_all_users()
 
 USER_1 = get_user(UUID_1)
 result = get_neighbors(USER_1)
+# print(result)
+result = get_distances(USER_1)
 print(result)
 
-
-
-
-
-
-# get_distances
 # add_neighbor
 # update_node
 # make_connection
