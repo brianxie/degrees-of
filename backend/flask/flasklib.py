@@ -190,7 +190,7 @@ def update_node(target, caller): # or user? should this query mongo?
             for i in range(len(target["artist_scores"])):
                 entry = target["artist_scores"][i]
                 if entry["_id"] == caller_key:
-                    entry = artist_score
+                    target["artist_scores"][i] = artist_score
                     break
 
 
