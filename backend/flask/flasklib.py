@@ -16,6 +16,14 @@ def get_all_users(): # queries users
         documents.append(document)
     return documents
 
+def add_user(user): # a "user" is the output of create_user_data
+    # should update users table in mongodb
+    client = MongoClient()
+    users = client.users # database users
+    # don't use insert to avoid duplicate key error
+    result = users.all.update_one(user, {"$setOnInsert": user}, upsert=True)
+    return result
+
 def get_neighbors(user):
     # retrieve list of neighbors (1-neighbors, a la adjacency list)
     neighbors = user["neighbors"]
@@ -47,25 +55,18 @@ def create_user_data(uuid, is_artist):
     # return user_json
     return user_data
 
-def add_user(uuid, is_artist): # string, bool; queries users
-    # should update users table in mongodb
-    client = MongoClient()
-    users = client.users # database users
-    # don't use insert to avoid duplicate key error
-    user_data = create_user_data(uuid, is_artist)
-    result = users.all.update_one(user_data, {"$setOnInsert": user_data}, upsert=True)
-    return result
 
-
-def add_neighbor(src, dst):
+def add_neighbor(src_user, dst_user):
     # adds dst as a neighbor of src
+    dst_id = dst_user["_id"]
+    src_user
     return None
 
 def update_required(user):
     # checks if we should add this node to the stack
     return None
 
-def update_node(user): # or user? should this query mongo?
+def update_node(user, caller): # or user? should this query mongo?
     # call get_neighbors and get list of neighbors
     # for each neighbor, call get_distances; see if this node should be updated
     # for each neighbor, check if neighbor node also needs to be updated

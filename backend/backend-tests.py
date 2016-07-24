@@ -12,22 +12,24 @@ client = MongoClient()
 users = client.users # database users
 # userinfo = client.userinfo # database userinfo
 
-result = create_user_data(UUID_1, False)
-# print(result)
+USER_1 = create_user_data(UUID_1, False)
+print(USER_1)
+USER_2 = create_user_data(UUID_2, False)
+print(USER_2)
 
-result = add_user(UUID_1, False)
-# print(result)
-result = add_user(UUID_2, False)
-# print(result)
+result = add_user(USER_1)
+print(result)
+result = add_user(USER_2)
+print(result)
 
 result = get_user(UUID_1)
-# print(result)
+print(result)
 result = get_all_users()
-# print(result)
+print(result)
 
 USER_1 = get_user(UUID_1)
 result = get_neighbors(USER_1)
-# print(result)
+print(result)
 result = get_distances(USER_1)
 print(result)
 
