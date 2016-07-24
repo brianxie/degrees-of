@@ -2,7 +2,7 @@ import requests
 
 root_address = "http://10.123.147.139:5000/"
 
-create_user_data_address = root_address + "createuserdata/"
+create_user_data_address = root_address + "createuserdata"
 create_user_data_payload_1 = {"name": "lana", "uuid": 1, "is_artist": True}
 create_user_data_payload_2 = {"name": "kanye", "uuid": 2, "is_artist": True}
 create_user_data_payload_3 = {"name": "rahul", "uuid": 3, "is_artist": False}
@@ -63,3 +63,8 @@ make_connection_payload_1 = {"uuid_1": 1, "uuid_2": 2}
 
 r1 = requests.post(make_connection_address, make_connection_payload_1)
 print(r1.text)
+
+r1 = requests.get(get_artist_scores_address, get_artist_scores_payload_1)
+print(r1.text)
+r2 = requests.get(get_artist_scores_address, get_artist_scores_payload_2)
+print(r2.text)

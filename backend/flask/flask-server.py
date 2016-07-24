@@ -14,7 +14,7 @@ def root():
 
 # @app.route("/getname/<uuid>")
 # def getName(uuid):
-@app.route("/getname/", methods=["GET"])
+@app.route("/getname", methods=["GET"])
 def getName():
     query = request.args
     uuid = query["uuid"]
@@ -22,7 +22,7 @@ def getName():
 
 # @app.route("/getuserentry/<uuid>")
 # def getUserEntry(uuid):
-@app.route("/getuserentry/", methods=["GET"])
+@app.route("/getuserentry", methods=["GET"])
 def getUserEntry():
     query = request.args
     uuid = query["uuid"]
@@ -30,7 +30,7 @@ def getUserEntry():
 
 # @app.route("/getartistscores/<uuid>")
 # def getArtistScores(uuid):
-@app.route("/getartistscores/", methods=["GET"])
+@app.route("/getartistscores", methods=["GET"])
 def getArtistScores():
     query = request.args
     uuid = query["uuid"]
@@ -39,7 +39,7 @@ def getArtistScores():
 
 # @app.route("/createuserdata/<name>/<uuid>/<isartist>")
 # def createUserData(name, uuid, isartist):
-@app.route("/createuserdata/", methods=["POST"])
+@app.route("/createuserdata", methods=["POST"])
 def createUserData():
     query = request.form.to_dict()
     name = query["name"]
@@ -49,10 +49,9 @@ def createUserData():
 
 # @app.route("/makeconnection/<uuid1>/<uuid2>")
 # def makeConnection(uuid1, uuid2):
-@app.route("/makeconnection/", methods=["GET"])
+@app.route("/makeconnection", methods=["POST"])
 def makeConnection():
     query = request.form.to_dict()
-    print(query)
     uuid_1 = query["uuid_1"]
     uuid_2 = query["uuid_2"]
     return json.dumps(make_connection(uuid_1, uuid_2))
