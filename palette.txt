@@ -1,0 +1,14 @@
+off white:      e5e3cd
+tan:            a2927b
+olive:          5f683e
+brown:          4a3111
+
+light blue:     87c7ad
+dark blue:      0f2043
+
+red:            dc4849
+orange:         f88d19  (sampled)
+yellow:         f4b443
+
+light green:    699a51
+dark green:     376436
