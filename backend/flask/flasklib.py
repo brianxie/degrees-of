@@ -37,21 +37,20 @@ def get_all_users(): # queries users
         documents.append(document)
     return documents
 
-def get_neighbors(uuid):
-    # query mongodb, retrieve list of neighbors (1-neighbors, a la adjacency list)
+def get_neighbors(user):
+    # retrieve list of neighbors (1-neighbors, a la adjacency list)
     client = MongoClient()
     return None
 
-def get_distances(uuid):
+def get_distances(user):
     # get distances to all artists for given uuid
-    # just a mongodb query
     return None
 
 def add_neighbor(src, dst):
     # adds dst as a neighbor of src
     return None
 
-def update_node(uuid):
+def update_node(uuid): # or user? should this query mongo?
     # call get_neighbors and get list of neighbors
     # for each neighbor, call get_distances; see if this node should be updated
     # for each neighbor, check if neighbor node also needs to be updated
