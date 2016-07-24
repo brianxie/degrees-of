@@ -2,6 +2,14 @@ from pymongo import MongoClient
 import json
 
 # done
+def kill_all():
+    client = MongoClient()
+    db_list = client.database_names()
+    for db in db_list:
+        client.drop_database(db)
+    return True
+
+# done
 def register_name(uuid, name):
     name_entry = {}
     name_entry["_id"] = uuid

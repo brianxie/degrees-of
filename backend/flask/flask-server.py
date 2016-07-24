@@ -12,6 +12,16 @@ def root():
     # print(request.data)
     return "brian\nkevin\nrahul"
 
+
+
+
+@app.route("/killall", methods=["POST"])
+def killAll():
+    return json.dumps(kill_all())
+
+
+
+
 # @app.route("/getname/<uuid>")
 # def getName(uuid):
 @app.route("/getname", methods=["GET"])

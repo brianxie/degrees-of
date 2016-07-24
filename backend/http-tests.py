@@ -64,7 +64,15 @@ make_connection_payload_1 = {"uuid_1": 1, "uuid_2": 2}
 r1 = requests.post(make_connection_address, make_connection_payload_1)
 print(r1.text)
 
+print()
+
 r1 = requests.get(get_artist_scores_address, get_artist_scores_payload_1)
 print(r1.text)
 r2 = requests.get(get_artist_scores_address, get_artist_scores_payload_2)
 print(r2.text)
+
+print()
+
+kill_all_address = root_address + "killall"
+rkill = requests.post(kill_all_address, {})
+print(rkill.text)

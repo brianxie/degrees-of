@@ -13,6 +13,8 @@ client = MongoClient()
 users = client.users # database users
 names = client.names # database names
 
+kill_all()
+
 USER_1 = create_user_data("kevin", UUID_1, True)
 USER_2 = create_user_data("rahul", UUID_2, True)
 USER_3 = create_user_data("brian", UUID_3, False)
