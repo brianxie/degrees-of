@@ -1,0 +1,20 @@
+{
+    "_id": "int",
+    "is_artist": "bool",
+    "artist_scores": [ // struct for each artist
+        {
+            "_id": "int", // uuid of artist
+            "shortest_path": [ // list of other users along the shortest path
+                // order important (stack unwind?)
+                {
+                    "_id": "int"
+                }
+            ]
+        }
+    ],
+    "neighbors": [ // list of neighbors (ordering unimportant)
+        {
+            "_id": "int"
+        }
+    ]
+}
