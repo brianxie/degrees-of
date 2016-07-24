@@ -21,6 +21,28 @@ def get_name(uuid):
     return result
 
 # done
+def get_all_names():
+    client = MongoClient()
+    names = client.names # database names
+    cursor = names.all.find()
+    documents = []
+    for document in cursor:
+        documents.append(document)
+    return documents
+
+# done
+def register_user_data(user): # a "user" is the output of create_user_data
+    # should update users table in mongodb, or add a new one
+    client = MongoClient()
+    users = client.users # database users
+    # don't use insert to avoid duplicate key error
+    # $setOnInsert?
+    key = {}
+    key["_id"] = user["_id"]
+    result = users.all.update_one(key, {"$set": user}, upsert=True)
+    return result
+
+# done
 def create_user_data(name, uuid, is_artist):
     # initializes the (json? bson? python thing?) that characterizes a user
     # see user-data-schema
@@ -36,13 +58,14 @@ def create_user_data(name, uuid, is_artist):
     user_data["neighbors"] = []
 
     register_name(uuid, name)
+    register_user_data(user_data)
 
     # user_json = json.dumps(user_data)
     # return user_json
     return user_data
 
 # done
-def get_user(uuid): # queries users db
+def get_user_entry(uuid): # queries users db
     client = MongoClient()
     users = client.users # database users
     result = users.all.find_one({"_id": uuid}) # searches just by uuid; at most one match
@@ -58,17 +81,6 @@ def get_all_users(): # queries users
         documents.append(document)
     return documents
 
-# done
-def add_user(user): # a "user" is the output of create_user_data
-    # should update users table in mongodb, or add a new one
-    client = MongoClient()
-    users = client.users # database users
-    # don't use insert to avoid duplicate key error
-    # $setOnInsert?
-    key = {}
-    key["_id"] = user["_id"]
-    result = users.all.update_one(key, {"$set": user}, upsert=True)
-    return result
 
 # done
 def get_neighbors(user):
@@ -145,7 +157,7 @@ def update_required(target, caller):
     # neighbors = get_neighbors(target)
     # neighbor_list = []
     # for neighbor in neighbors:
-    #     neighbor_list.append(get_user(neighbor["_id"]))
+    #     neighbor_list.append(get_user_entry(neighbor["_id"]))
     # return True
 
 # done
@@ -180,14 +192,26 @@ def make_connection(uuid_1, uuid_2):
     IS_ARTIST_CONST = False # always assume that any new node is not an artist
 
     # query mongo for users
-    user_1 = get_user(uuid_1)
-    user_2 = get_user(uuid_2)
+    user_1 = get_user_entry(uuid_1)
+    user_2 = get_user_entry(uuid_2)
 
     # create users with NO_NAME if they don't yet exist
+    # this should NOT HAPPEN; create_user_data should always be called first
+    # this stores uuid:name mapping in some other database
     if user_1 == None:
-        user_1 = create_user_data("NO_NAME", uuid_1, IS_ARTIST_CONST)
+        name_1 = get_name(uuid_1)
+        if name_1 == None:
+            name_1 = "NO_NAME"
+        else:
+            name_1 = name_1["name"]
+        user_1 = create_user_data(name_1, uuid_1, IS_ARTIST_CONST)
     if user_2 == None:
-        user_2 = create_user_data("NO_NAME", uuid_2, IS_ARTIST_CONST)
+        name_2 = get_name(uuid_2)
+        if name_2 == None:
+            name_2 = "NO_NAME"
+        else:
+            name_2 = name_2["name"]
+        user_2 = create_user_data(name_2, uuid_2, IS_ARTIST_CONST)
 
     # add_neighbor on each node
     new_entry_created_1 = add_neighbor(user_1, user_2)[1]
@@ -196,8 +220,8 @@ def make_connection(uuid_1, uuid_2):
     if not new_entry_created_1 and not new_entry_created_2: # already connected
         return False
 
-    add_user(user_1)
-    add_user(user_2)
+    register_user_data(user_1)
+    register_user_data(user_2)
 
 
     # # if users already connected, terminate early
@@ -227,18 +251,18 @@ def make_connection(uuid_1, uuid_2):
         entry = update_pq.pop()
         target_uuid = entry[0]
         caller_uuid = entry[1]
-        target = get_user(target_uuid)
-        caller = get_user(caller_uuid)
+        target = get_user_entry(target_uuid)
+        caller = get_user_entry(caller_uuid)
 
         update_node(target, caller)
         target_neighbor_uuid_set = get_neighbor_uuid_set(target)
         target_neighbor_uuid_set.remove(caller_uuid) # can't modify own caller
         for neighbor_uuid in target_neighbor_uuid_set:
-            neighbor = get_user(neighbor_uuid)
+            neighbor = get_user_entry(neighbor_uuid)
             if update_required(neighbor, target):
                 update_pq.insert(0, (neighbor, target))
 
-        add_user(target)
+        register_user_data(target)
 
 
     return True
