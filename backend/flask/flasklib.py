@@ -10,7 +10,7 @@ def kill_all():
     return True
 
 # done
-def register_name(uuid, name):
+def register_name(uuid, name): # arbitrary, string
     name_entry = {}
     name_entry["_id"] = uuid
     name_entry["name"] = name
@@ -23,7 +23,7 @@ def register_name(uuid, name):
 
 # done
 ## PUBLIC API
-def get_name(uuid):
+def get_name(uuid): # arbitrary
     client = MongoClient()
     names = client.names # database names
     result = names.all.find_one({"_id": uuid}) # searches just by uuid; at most one match
@@ -53,14 +53,16 @@ def register_user_data(user): # a "user" is the output of create_user_data
 
 # done
 ## PUBLIC API
-def create_user_data(name, uuid, is_artist):
+def create_user_data(name, uuid, is_artist): # string, arbitrary, BOOLEAN
     # initializes the (json? bson? python thing?) that characterizes a user
     # see user-data-schema
+    if is_artist == "False":
+        is_artist = False # HAHAHAHAHH
     user_data = {}
     user_data["_id"] = uuid
     user_data["is_artist"] = is_artist
     user_data["artist_scores"] = []
-    if is_artist:
+    if is_artist: # careful if parsing from json, may be evaluated as string!
         artist_entry = {}
         artist_entry["_id"] = uuid
         artist_entry["distance"] = 0
@@ -76,7 +78,7 @@ def create_user_data(name, uuid, is_artist):
 
 # done
 ## PUBLIC API
-def get_user_entry(uuid): # queries users db
+def get_user_entry(uuid): # queries users db # arbitrary
     client = MongoClient()
     users = client.users # database users
     result = users.all.find_one({"_id": uuid}) # searches just by uuid; at most one match
@@ -94,13 +96,13 @@ def get_all_users(): # queries users
 
 
 # done
-def get_neighbors(user):
+def get_neighbors(user): # ??
     # retrieve list of neighbors (1-neighbors, a la adjacency list)
     neighbors = user["neighbors"]
     return neighbors
 
 #done
-def get_neighbor_uuid_set(user):
+def get_neighbor_uuid_set(user): # ??
     neighbors = get_neighbors(user)
     neighbor_uuid_set = set()
     for neighbor in neighbors:
@@ -109,7 +111,7 @@ def get_neighbor_uuid_set(user):
 
 # done
 ## PUBLIC API
-def get_artist_scores(user):
+def get_artist_scores(user): # ??
     # get distances to all artists for given uuid
     # note that the schema stores the exact path, but this method is not interested
     artist_scores = user["artist_scores"]
@@ -124,7 +126,7 @@ def get_artist_scores(user):
     return artist_scores
 
 # done
-def add_neighbor(src_user, dst_user):
+def add_neighbor(src_user, dst_user): # ??, ??
     # adds dst as a neighbor of src; does not handle artist logic
     dst_id = dst_user["_id"]
     src_user_neighbors = src_user["neighbors"] # list of "_id": id
@@ -146,7 +148,7 @@ def add_neighbor(src_user, dst_user):
 
 
 # done
-def update_required(target, caller):
+def update_required(target, caller): # ??, ??
     # checks if we should add this node to the stack
     target_artist_scores_list = target["artist_scores"]
     caller_artist_scores_list = caller["artist_scores"]
@@ -173,7 +175,7 @@ def update_required(target, caller):
     # return True
 
 # done
-def update_node(target, caller): # or user? should this query mongo?
+def update_node(target, caller): # users
     # this needs to handle artist logic
     target_artist_scores_list = target["artist_scores"]
     caller_artist_scores_list = caller["artist_scores"]
@@ -211,7 +213,7 @@ def update_node(target, caller): # or user? should this query mongo?
 
 # done
 ## PUBLIC API
-def make_connection(uuid_1, uuid_2):
+def make_connection(uuid_1, uuid_2): # arbitrary, arbitrary
     if uuid_1 == uuid_2: # can't add yourself!
         return False
 
