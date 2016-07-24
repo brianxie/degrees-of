@@ -10,7 +10,7 @@ UUID_2 = "9999999999"
 client = MongoClient()
 
 users = client.users # database users
-userinfo = client.userinfo # database userinfo
+# userinfo = client.userinfo # database userinfo
 
 
 # insert the data

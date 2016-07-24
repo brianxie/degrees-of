@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 
-def add_user(uuid, is_artist): # string, bool
+def add_user(uuid, is_artist): # string, bool; queries users
     # should update users table in mongodb
     client = MongoClient()
     users = client.users # database users
@@ -9,13 +9,13 @@ def add_user(uuid, is_artist): # string, bool
     result = users.all.update_one({"_id": uuid, "is_artist": is_artist}, {"$setOnInsert": {"_id": uuid, "is_artist": is_artist}}, upsert=True)
     return result
 
-def get_user(uuid):
+def get_user(uuid): # queries users
     client = MongoClient()
     users = client.users # database users
     result = users.all.find_one({"_id": uuid})
     return result
 
-def get_all_users():
+def get_all_users(): # queries users
     client = MongoClient()
     users = client.users # database users
     cursor = users.all.find()
@@ -31,6 +31,11 @@ def get_neighbors(uuid):
 
 def get_distances(uuid):
     # get distances to all artists for given uuid
+    # just a mongodb query
+    return None
+
+def add_neighbor(src, dst):
+    # adds dst as a neighbor of src
     return None
 
 def update_node(uuid):
@@ -43,5 +48,6 @@ def update_node(uuid):
 def make_connection(uuid1, uuid2):
     # if a user not in table, add_user
     # if connection already exists, terminate - nothing to do
+    # add_neighbor on each node
     # call update_node on both nodes
     return None # TODO

@@ -2,6 +2,6 @@ flask
 mongodb
 
 in mongodb, store:
--map {uuid user : boolean is_artist}
+-map {uuid user : boolean is_artist} (probably not)
 -user-data-schema for each user
 -adjacency matrix? (probably not)

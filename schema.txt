@@ -11,6 +11,6 @@ per-user data is stored as json in three sections:
 -map {uuid artist : int distance} // so that computation is not required upon query
 which are updated as necessary each time graph is updated
 
-list of users is stored in a separate json (maps uuid to boolean is_artist)
+list of users is stored in a separate json (maps uuid to boolean is_artist) (actually this is probably not necessary)
 
 adjacency matrix? (probably not)
