@@ -4,13 +4,13 @@ from flasklib import *
 
 kill_all()
 
-brian = ("brian", 31, False)
-kevin = ("kevin", 11, False)
-rahul = ("rahul", 136, False)
+brian = ("brian", "31", False)
+kevin = ("kevin", "11", False)
+rahul = ("rahul", "136", False)
 
-chance = ("chance", 1, True)
-john_cena = ("john cena", 50, True)
-taylor = ("taylor", 22, True)
+chance = ("chance", "1", True)
+john_cena = ("john cena", "50", True)
+taylor = ("taylor", "22", True)
 
 def make(user):
     create_user_data(user[0], user[1], user[2])
