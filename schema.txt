@@ -1,0 +1,12 @@
+# data format
+construct a graph of artists and users
+each time a connection is made between two users, both users contact the server
+server verifies that connection is valid, updates graph, recomputes degrees for each node (user)
+done in a locking fashion such that the shortest path is computed
+IMPORTANT: ALL edges must be maintained
+
+key nodes by some uuid (wristband? hardware identifier?)
+data is stored as json with entries for each artist, and storing all nodes with which user has interacted with
+multiple possible formats for json:
+-for each artist, maintain only an ordered list of references (edges) leading to the artist; don't store the score in json, rather, dynamically compute for each query; does lots of work on queries, but not on updates
+*for each artist, maintain the edge list for the current shortest path as well as a value (distance); this value must be updated each time the graph is updated, but does not need to be recomputed on each query; does slightly more work on updates, but none on queries
