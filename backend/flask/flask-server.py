@@ -10,6 +10,7 @@ app = Flask(__name__)
 def root():
     return "brian\nkevin\nrahul"
 
+# TODO http requests
 
 @app.route("/getname/<uuid>")
 def getName(uuid):
