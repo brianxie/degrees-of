@@ -51,7 +51,12 @@ def getArtistScores():
 # def createUserData(name, uuid, isartist):
 @app.route("/createuserdata", methods=["POST"])
 def createUserData():
-    query = request.form.to_dict()
+    # query = request.form.to_dict()
+    query = request.json
+    # print(str(request.data))
+    # print(request.json)
+    # print(query)
+    # print(json.dumps(query))
     name = query["name"]
     uuid = query["uuid"]
     is_artist = query["is_artist"]
@@ -61,7 +66,8 @@ def createUserData():
 # def makeConnection(uuid1, uuid2):
 @app.route("/makeconnection", methods=["POST"])
 def makeConnection():
-    query = request.form.to_dict()
+    # query = request.form.to_dict()
+    query = request.json
     uuid_1 = query["uuid_1"]
     uuid_2 = query["uuid_2"]
     return json.dumps(make_connection(uuid_1, uuid_2))

@@ -2,6 +2,7 @@ from pymongo import MongoClient
 import json
 
 # done
+## PUBLIC API (WHY???)
 def kill_all():
     client = MongoClient()
     db_list = client.database_names()
@@ -56,6 +57,10 @@ def register_user_data(user): # a "user" is the output of create_user_data
 def create_user_data(name, uuid, is_artist): # string, arbitrary, BOOLEAN
     # initializes the (json? bson? python thing?) that characterizes a user
     # see user-data-schema
+
+    if get_name(uuid):
+        return None # already exists
+
     if is_artist == "False":
         is_artist = False # HAHAHAHAHH
     user_data = {}
