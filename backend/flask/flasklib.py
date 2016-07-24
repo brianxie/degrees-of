@@ -204,6 +204,9 @@ def update_node(target, caller): # or user? should this query mongo?
 # done
 ## PUBLIC API
 def make_connection(uuid_1, uuid_2):
+    if uuid_1 == uuid_2: # can't add yourself!
+        return False
+
     IS_ARTIST_CONST = False # always assume that any new node is not an artist
 
     # query mongo for users
