@@ -1,12 +1,14 @@
 from pymongo import MongoClient
 import json
 
+# done
 def get_user(uuid): # queries users db
     client = MongoClient()
     users = client.users # database users
     result = users.all.find_one({"_id": uuid}) # searches just by uuid; at most one match
     return result
 
+# done
 def get_all_users(): # queries users
     client = MongoClient()
     users = client.users # database users
@@ -16,6 +18,7 @@ def get_all_users(): # queries users
         documents.append(document)
     return documents
 
+# done
 def add_user(user): # a "user" is the output of create_user_data
     # should update users table in mongodb, or add a new one
     client = MongoClient()
@@ -27,11 +30,13 @@ def add_user(user): # a "user" is the output of create_user_data
     result = users.all.update_one(key, {"$set": user}, upsert=True)
     return result
 
+# done
 def get_neighbors(user):
     # retrieve list of neighbors (1-neighbors, a la adjacency list)
     neighbors = user["neighbors"]
     return neighbors
 
+#done
 def get_neighbor_uuid_set(user):
     neighbors = get_neighbors(user)
     neighbor_uuid_set = set()
@@ -39,6 +44,7 @@ def get_neighbor_uuid_set(user):
         neighbor_uuid_set.add(neighbor["_id"])
     return neighbor_uuid_set
 
+# done
 def get_artist_scores(user):
     # get distances to all artists for given uuid
     # note that the schema stores the exact path, but this method is not interested
@@ -53,6 +59,7 @@ def get_artist_scores(user):
 
     return artist_scores
 
+# done
 def create_user_data(uuid, is_artist):
     # initializes the (json? bson? python thing?) that characterizes a user
     # see user-data-schema
@@ -60,14 +67,19 @@ def create_user_data(uuid, is_artist):
     user_data["_id"] = uuid
     user_data["is_artist"] = is_artist
     user_data["artist_scores"] = []
+    if is_artist:
+        artist_entry = {}
+        artist_entry["_id"] = uuid
+        artist_entry["distance"] = 0
+        user_data["artist_scores"].append(artist_entry)
     user_data["neighbors"] = []
     # user_json = json.dumps(user_data)
     # return user_json
     return user_data
 
-
+# done
 def add_neighbor(src_user, dst_user):
-    # adds dst as a neighbor of src
+    # adds dst as a neighbor of src; does not handle artist logic
     dst_id = dst_user["_id"]
     src_user_neighbors = src_user["neighbors"] # list of "_id": id
 
@@ -87,22 +99,44 @@ def add_neighbor(src_user, dst_user):
     return (src_user, new_entry_required)
 
 
-# everything below here is todo
+# done, i think
 def update_required(target, caller):
     # checks if we should add this node to the stack
-    neighbors = get_neighbors(target)
-    neighbor_list = []
-    for neighbor in neighbors:
-        neighbor_list.append(get_user(neighbor["_id"]))
-    return True
+    target_artist_scores_list = target["artist_scores"]
+    caller_artist_scores_list = caller["artist_scores"]
+
+    target_map = {}
+    for artist_score in target_artist_scores_list:
+        target_map[artist_score["_id"]] = artist_score["distance"]
+    caller_map = {}
+    for artist_score in caller_artist_scores_list:
+        caller_map[artist_score["_id"]] = artist_score["distance"]
+
+
+    for caller_key in caller_map.keys():
+        if not caller_key in target_map:
+            return True
+        elif caller_map[caller_key] < target_map[caller_key]:
+            return True
+    return False
+
+
+    # neighbors = get_neighbors(target)
+    # neighbor_list = []
+    # for neighbor in neighbors:
+    #     neighbor_list.append(get_user(neighbor["_id"]))
+    # return True
 
 def update_node(target, caller): # or user? should this query mongo?
+    # this needs to handle artist logic
+
     # call get_neighbors and get list of neighbors
     # for each neighbor, call get_artist_scores; see if this node should be updated
     # for each neighbor, check if neighbor node also needs to be updated
     # if so, recursively call update_node on that node
     return None # TODO
 
+# done, probably?
 def make_connection(uuid_1, uuid_2):
     IS_ARTIST_CONST = False # always assume that any new node is not an artist
 
@@ -145,10 +179,10 @@ def make_connection(uuid_1, uuid_2):
     # call update_node on both nodes and any other required nodes
 
     update_pq = [] # tuples of uuid, caller uuid
-    if update_required(user_1, user_2):
-        update_pq.insert(0, (uuid_1, uuid_2))
-    if update_required(user_2, user_1):
-        update_pq.insert(0, (uuid_2, uuid_1))
+    # if update_required(user_1, user_2):
+    update_pq.insert(0, (uuid_1, uuid_2))
+    # if update_required(user_2, user_1):
+    update_pq.insert(0, (uuid_2, uuid_1))
 
     while len(update_pq) > 0:
         entry = update_pq.pop()
@@ -168,4 +202,4 @@ def make_connection(uuid_1, uuid_2):
         add_user(target)
 
 
-    return True # TODO
+    return True
