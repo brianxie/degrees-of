@@ -17,12 +17,10 @@ USER_1 = create_user_data("kevin", UUID_1, True)
 USER_2 = create_user_data("rahul", UUID_2, True)
 USER_3 = create_user_data("brian", UUID_3, False)
 
-make_connection(USER_1, USER_3)
-make_connection(USER_2, USER_3)
+make_connection(UUID_1, UUID_3)
 
-for thing in get_all_users():
-    print(thing)
-    print("================")
+make_connection(UUID_2, UUID_3)
+
 
 
 # USER_1 = create_user_data("brian", UUID_1, False)

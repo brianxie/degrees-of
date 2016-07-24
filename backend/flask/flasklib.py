@@ -209,6 +209,7 @@ def make_connection(uuid_1, uuid_2):
             name_1 = "NO_NAME"
         else:
             name_1 = name_1["name"]
+        print(uuid_1)
         user_1 = create_user_data(name_1, uuid_1, IS_ARTIST_CONST)
     if user_2 == None:
         name_2 = get_name(uuid_2)
@@ -265,7 +266,7 @@ def make_connection(uuid_1, uuid_2):
         for neighbor_uuid in target_neighbor_uuid_set:
             neighbor = get_user_entry(neighbor_uuid)
             if update_required(neighbor, target):
-                update_pq.insert(0, (neighbor, target))
+                update_pq.insert(0, (neighbor_uuid, target_uuid))
 
         register_user_data(target)
 
