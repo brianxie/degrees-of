@@ -126,6 +126,7 @@ def update_required(target, caller):
     #     neighbor_list.append(get_user(neighbor["_id"]))
     # return True
 
+# done
 def update_node(target, caller): # or user? should this query mongo?
     # this needs to handle artist logic
     target_artist_scores_list = target["artist_scores"]
