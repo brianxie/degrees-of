@@ -178,11 +178,21 @@ def update_node(target, caller): # or user? should this query mongo?
         caller_map[artist_score["_id"]] = artist_score["distance"]
 
     for caller_key in caller_map.keys():
-        if not caller_key in target_map or target_map[caller_key] > caller_map[caller_key] + 1:
+        if not caller_key in target_map:
             artist_score = {}
             artist_score["_id"] = caller_key
             artist_score["distance"] = caller_map[caller_key] + 1
             target["artist_scores"].append(artist_score)
+        elif target_map[caller_key] > caller_map[caller_key] + 1:
+            artist_score = {}
+            artist_score["_id"] = caller_key
+            artist_score["distance"] = caller_map[caller_key] + 1
+            for i in range(len(target["artist_scores"])):
+                entry = target["artist_scores"][i]
+                if entry["_id"] == caller_key:
+                    entry = artist_score
+                    break
+
 
 
     # call get_neighbors and get list of neighbors

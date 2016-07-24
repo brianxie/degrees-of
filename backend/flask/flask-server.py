@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from pymongo import MongoClient
 
 from flasklib import *
@@ -6,8 +6,10 @@ from flasklib import *
 app = Flask(__name__)
 
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def root():
+    print(json.loads(request.data))
+
     return "brian\nkevin\nrahul"
 
 # TODO http requests
