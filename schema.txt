@@ -5,8 +5,12 @@ server verifies that connection is valid, updates graph, recomputes degrees for 
 TODO: is the graph locked every time? can we respond to multiple queries in parallel?
 
 key nodes by some uuid (wristband? hardware identifier?)
-data is stored as json in three sections:
--set {uuid neighbor} // edges to neighbor users, which is already sufficient to encode the entire graph
+per-user data is stored as json in three sections:
+-set {uuid neighbor} // edges to neighbor users, which is already sufficient to encode the entire graph; this essentially forms an adjacency list
 -map {uuid artist : list [uuid user]} // describes the particular nodes (users) along the shortest path to the artist
 -map {uuid artist : int distance} // so that computation is not required upon query
 which are updated as necessary each time graph is updated
+
+list of users is stored in a separate json (maps uuid to boolean is_artist)
+
+adjacency matrix? (probably not)
