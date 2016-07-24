@@ -32,6 +32,13 @@ def get_neighbors(user):
     neighbors = user["neighbors"]
     return neighbors
 
+def get_neighbor_uuid_set(user):
+    neighbors = get_neighbors(user)
+    neighbor_uuid_set = set()
+    for neighbor in neighbors:
+        neighbor_uuid_set.add(neighbor["_id"])
+    return neighbor_uuid_set
+
 def get_artist_scores(user):
     # get distances to all artists for given uuid
     # note that the schema stores the exact path, but this method is not interested
@@ -79,50 +86,46 @@ def add_neighbor(src_user, dst_user):
 
     return (src_user, new_entry_required)
 
-def update_required(user):
+
+# everything below here is todo
+def update_required(target, caller):
     # checks if we should add this node to the stack
-    neighbors = get_neighbors(user)
+    neighbors = get_neighbors(target)
     neighbor_list = []
     for neighbor in neighbors:
         neighbor_list.append(get_user(neighbor["_id"]))
     return True
 
-def update_node(user, caller): # or user? should this query mongo?
+def update_node(target, caller): # or user? should this query mongo?
     # call get_neighbors and get list of neighbors
     # for each neighbor, call get_artist_scores; see if this node should be updated
     # for each neighbor, check if neighbor node also needs to be updated
     # if so, recursively call update_node on that node
     return None # TODO
 
-def make_connection(uuid1, uuid2):
+def make_connection(uuid_1, uuid_2):
     IS_ARTIST_CONST = False # always assume that any new node is not an artist
 
-    user_1 = get_user(uuid1)
-    user_2 = get_user(uuid2)
+    # query mongo for users
+    user_1 = get_user(uuid_1)
+    user_2 = get_user(uuid_2)
 
-    # add users to database if they don't yet exist
-    requery1 = False
-    requery2 = False
+    # create users  if they don't yet exist
     if user_1 == None:
-        add_user(create_user_data(uuid1, IS_ARTIST_CONST))
-        requery1 = True
+        user_1 = create_user_data(uuid_1, IS_ARTIST_CONST)
     if user_2 == None:
-        add_user(create_user_data(uuid2, IS_ARTIST_CONST))
-        requery2 = True
-
-    if requery1:
-        user_1 = get_user(uuid1)
-    if requery2:
-        user_2 = get_user(uuid2)
+        user_2 = create_user_data(uuid_2, IS_ARTIST_CONST)
 
     # add_neighbor on each node
     new_entry_created_1 = add_neighbor(user_1, user_2)[1]
-    # print(new_entry_created_1)
     new_entry_created_2 = add_neighbor(user_2, user_1)[1]
-    # print(new_entry_created_2)
 
     if not new_entry_created_1 and not new_entry_created_2: # already connected
         return False
+
+    add_user(user_1)
+    add_user(user_2)
+
 
     # # if users already connected, terminate early
     # # this block is kinda handled by add_neighbor already
@@ -136,12 +139,33 @@ def make_connection(uuid1, uuid2):
     # for item in user_2_neighbors:
     #     user_2_neighbors_uuid_list.append(item["_id"])
 
-    # if uuid1 in user_2_neighbors_uuid_list or uuid2 in user_1_neighbors_uuid_list:
+    # if uuid_1 in user_2_neighbors_uuid_list or uuid_2 in user_1_neighbors_uuid_list:
     #     return False
 
-    # call update_node on both nodes
+    # call update_node on both nodes and any other required nodes
 
-    add_user(user_1)
-    add_user(user_2)
+    update_pq = [] # tuples of uuid, caller uuid
+    if update_required(user_1, user_2):
+        update_pq.insert(0, (uuid_1, uuid_2))
+    if update_required(user_2, user_1):
+        update_pq.insert(0, (uuid_2, uuid_1))
+
+    while len(update_pq) > 0:
+        entry = update_pq.pop()
+        target_uuid = entry[0]
+        caller_uuid = entry[1]
+        target = get_user(target_uuid)
+        caller = get_user(caller_uuid)
+
+        update_node(target, caller)
+        target_neighbor_uuid_set = get_neighbor_uuid_set(target)
+        target_neighbor_uuid_set.remove(caller_uuid) # can't modify own caller
+        for neighbor_uuid in target_neighbor_uuid_set:
+            neighbor = get_user(neighbor_uuid)
+            if update_required(neighbor, target):
+                update_pq.insert(0, (neighbor, target))
+
+        add_user(target)
+
 
     return True # TODO
