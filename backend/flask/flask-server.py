@@ -8,7 +8,14 @@ app = Flask(__name__)
 
 @app.route("/", methods=["GET", "POST"])
 def root():
-    print(json.loads(request.data))
+    if request.method == "GET":
+        print("get")
+    elif request.method == "POST":
+        print("post")
+    else:
+        print("no")
+    # print(json.loads(request.data))
+    print(request.data)
 
     return "brian\nkevin\nrahul"
 
