@@ -17,11 +17,12 @@ def get_all_users(): # queries users
     return documents
 
 def add_user(user): # a "user" is the output of create_user_data
-    # should update users table in mongodb
+    # should update users table in mongodb, or add a new one
     client = MongoClient()
     users = client.users # database users
     # don't use insert to avoid duplicate key error
-    result = users.all.update_one(user, {"$setOnInsert": user}, upsert=True)
+    # $setOnInsert?
+    result = users.all.update_one(user, {"$set": user}, upsert=True)
     return result
 
 def get_neighbors(user):
@@ -29,7 +30,7 @@ def get_neighbors(user):
     neighbors = user["neighbors"]
     return neighbors
 
-def get_distances(user):
+def get_artist_scores(user):
     # get distances to all artists for given uuid
     # note that the schema stores the exact path, but this method is not interested
     artist_scores = user["artist_scores"]
@@ -59,8 +60,22 @@ def create_user_data(uuid, is_artist):
 def add_neighbor(src_user, dst_user):
     # adds dst as a neighbor of src
     dst_id = dst_user["_id"]
-    src_user
-    return None
+    src_user_neighbors = src_user["neighbors"] # list of "_id": id
+
+    new_entry_required = True
+
+    for neighbor in src_user_neighbors: # each neighbor is a dictionary
+        neighbor_id = neighbor["_id"]
+        if neighbor_id == dst_id:
+            new_entry_required = False
+            break
+
+    if new_entry_required:
+        new_neighbor = {}
+        new_neighbor["_id"] = dst_id
+        src_user_neighbors.append(new_neighbor)
+
+    return (src_user, new_entry_required)
 
 def update_required(user):
     # checks if we should add this node to the stack
@@ -68,7 +83,7 @@ def update_required(user):
 
 def update_node(user, caller): # or user? should this query mongo?
     # call get_neighbors and get list of neighbors
-    # for each neighbor, call get_distances; see if this node should be updated
+    # for each neighbor, call get_artist_scores; see if this node should be updated
     # for each neighbor, check if neighbor node also needs to be updated
     # if so, recursively call update_node on that node
     return None # TODO

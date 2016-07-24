@@ -30,7 +30,16 @@ print(result)
 USER_1 = get_user(UUID_1)
 result = get_neighbors(USER_1)
 print(result)
-result = get_distances(USER_1)
+result = get_artist_scores(USER_1)
+print(result)
+
+result = add_neighbor(USER_1, USER_2)
+print(result)
+result = get_neighbors(USER_1)
+print(result)
+result = add_neighbor(USER_1, USER_2)
+print(result)
+result = get_neighbors(USER_1)
 print(result)
 
 # add_neighbor
