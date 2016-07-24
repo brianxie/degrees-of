@@ -22,7 +22,9 @@ def add_user(user): # a "user" is the output of create_user_data
     users = client.users # database users
     # don't use insert to avoid duplicate key error
     # $setOnInsert?
-    result = users.all.update_one(user, {"$set": user}, upsert=True)
+    key = {}
+    key["_id"] = user["_id"]
+    result = users.all.update_one(key, {"$set": user}, upsert=True)
     return result
 
 def get_neighbors(user):
@@ -79,7 +81,11 @@ def add_neighbor(src_user, dst_user):
 
 def update_required(user):
     # checks if we should add this node to the stack
-    return None
+    neighbors = get_neighbors(user)
+    neighbor_list = []
+    for neighbor in neighbors:
+        neighbor_list.append(get_user(neighbor["_id"]))
+    return True
 
 def update_node(user, caller): # or user? should this query mongo?
     # call get_neighbors and get list of neighbors
@@ -89,7 +95,7 @@ def update_node(user, caller): # or user? should this query mongo?
     return None # TODO
 
 def make_connection(uuid1, uuid2):
-    IS_ARTIST_CONST = False
+    IS_ARTIST_CONST = False # always assume that any new node is not an artist
 
     user_1 = get_user(uuid1)
     user_2 = get_user(uuid2)
@@ -99,28 +105,43 @@ def make_connection(uuid1, uuid2):
     requery2 = False
     if user_1 == None:
         add_user(create_user_data(uuid1, IS_ARTIST_CONST))
+        requery1 = True
     if user_2 == None:
         add_user(create_user_data(uuid2, IS_ARTIST_CONST))
+        requery2 = True
 
     if requery1:
         user_1 = get_user(uuid1)
     if requery2:
         user_2 = get_user(uuid2)
 
-    # if users already connected, terminate early
-    user_1_neighbors = get_neighbors(user1)
-    user_2_neighbors = get_neighbors(user2)
+    # add_neighbor on each node
+    new_entry_created_1 = add_neighbor(user_1, user_2)[1]
+    # print(new_entry_created_1)
+    new_entry_created_2 = add_neighbor(user_2, user_1)[1]
+    # print(new_entry_created_2)
 
-    user_1_neighbors_uuid_list = []
-    user_2_neighbors_uuid_list = []
-    for item in user_1_neighbors:
-        user_1_neighbors_uuid_list.append(item["_id"])
-    for item in user_2_neighbors:
-        user_2_neighbors_uuid_list.append(item["_id"])
-
-    if uuid1 in user_2_neighbors_uuid_list or uuid2 in user_1_neighbors_uuid_list:
+    if not new_entry_created_1 and not new_entry_created_2: # already connected
         return False
 
-    # add_neighbor on each node
+    # # if users already connected, terminate early
+    # # this block is kinda handled by add_neighbor already
+    # user_1_neighbors = get_neighbors(user1)
+    # user_2_neighbors = get_neighbors(user2)
+
+    # user_1_neighbors_uuid_list = []
+    # user_2_neighbors_uuid_list = []
+    # for item in user_1_neighbors:
+    #     user_1_neighbors_uuid_list.append(item["_id"])
+    # for item in user_2_neighbors:
+    #     user_2_neighbors_uuid_list.append(item["_id"])
+
+    # if uuid1 in user_2_neighbors_uuid_list or uuid2 in user_1_neighbors_uuid_list:
+    #     return False
+
     # call update_node on both nodes
-    return None # TODO
+
+    add_user(user_1)
+    add_user(user_2)
+
+    return True # TODO
