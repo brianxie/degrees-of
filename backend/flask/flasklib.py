@@ -89,8 +89,38 @@ def update_node(user, caller): # or user? should this query mongo?
     return None # TODO
 
 def make_connection(uuid1, uuid2):
-    # if a user not in table, add_user
-    # if connection already exists, terminate - nothing to do
+    IS_ARTIST_CONST = False
+
+    user_1 = get_user(uuid1)
+    user_2 = get_user(uuid2)
+
+    # add users to database if they don't yet exist
+    requery1 = False
+    requery2 = False
+    if user_1 == None:
+        add_user(create_user_data(uuid1, IS_ARTIST_CONST))
+    if user_2 == None:
+        add_user(create_user_data(uuid2, IS_ARTIST_CONST))
+
+    if requery1:
+        user_1 = get_user(uuid1)
+    if requery2:
+        user_2 = get_user(uuid2)
+
+    # if users already connected, terminate early
+    user_1_neighbors = get_neighbors(user1)
+    user_2_neighbors = get_neighbors(user2)
+
+    user_1_neighbors_uuid_list = []
+    user_2_neighbors_uuid_list = []
+    for item in user_1_neighbors:
+        user_1_neighbors_uuid_list.append(item["_id"])
+    for item in user_2_neighbors:
+        user_2_neighbors_uuid_list.append(item["_id"])
+
+    if uuid1 in user_2_neighbors_uuid_list or uuid2 in user_1_neighbors_uuid_list:
+        return False
+
     # add_neighbor on each node
     # call update_node on both nodes
     return None # TODO
