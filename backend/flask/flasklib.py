@@ -116,7 +116,7 @@ def update_required(target, caller):
     for caller_key in caller_map.keys():
         if not caller_key in target_map:
             return True
-        elif caller_map[caller_key] < target_map[caller_key]:
+        elif target_map[caller_key] > caller_map[caller_key] + 1:
             return True
     return False
 
