@@ -112,7 +112,6 @@ def update_required(target, caller):
     for artist_score in caller_artist_scores_list:
         caller_map[artist_score["_id"]] = artist_score["distance"]
 
-
     for caller_key in caller_map.keys():
         if not caller_key in target_map:
             return True
@@ -129,6 +128,23 @@ def update_required(target, caller):
 
 def update_node(target, caller): # or user? should this query mongo?
     # this needs to handle artist logic
+    target_artist_scores_list = target["artist_scores"]
+    caller_artist_scores_list = caller["artist_scores"]
+
+    target_map = {}
+    for artist_score in target_artist_scores_list:
+        target_map[artist_score["_id"]] = artist_score["distance"]
+    caller_map = {}
+    for artist_score in caller_artist_scores_list:
+        caller_map[artist_score["_id"]] = artist_score["distance"]
+
+    for caller_key in caller_map.keys():
+        if not caller_key in target_map or target_map[caller_key] > caller_map[caller_key] + 1:
+            artist_score = {}
+            artist_score["_id"] = caller_key
+            artist_score["distance"] = caller_map[caller_key] + 1
+            target["artist_scores"].append(artist_score)
+
 
     # call get_neighbors and get list of neighbors
     # for each neighbor, call get_artist_scores; see if this node should be updated
@@ -179,10 +195,12 @@ def make_connection(uuid_1, uuid_2):
     # call update_node on both nodes and any other required nodes
 
     update_pq = [] # tuples of uuid, caller uuid
-    # if update_required(user_1, user_2):
-    update_pq.insert(0, (uuid_1, uuid_2))
-    # if update_required(user_2, user_1):
-    update_pq.insert(0, (uuid_2, uuid_1))
+    if update_required(user_1, user_2):
+        print("1,2 required")
+        update_pq.insert(0, (uuid_1, uuid_2))
+    if update_required(user_2, user_1):
+        print("2,1 required")
+        update_pq.insert(0, (uuid_2, uuid_1))
 
     while len(update_pq) > 0:
         entry = update_pq.pop()
